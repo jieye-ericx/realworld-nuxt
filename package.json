@@ -1,7 +1,7 @@
 {
   "name": "realworld-nuxt",
   "version": "1.0.0",
-  "description": "A sample integrates realworld and nuxt ",
+  "description": "A sample integrates realworld and nuxt.js",
   "author": "radoapx",
   "private": true,
   "scripts": {
