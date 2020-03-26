@@ -28,7 +28,11 @@
 </template>
 
 <script>
+// process.server是Nuxt提供的api，判断当前环境
+const Cookie = process.client ? require("js-cookie") : undefined;
+
 export default {
+  middleware:'noAuthenticated',
   async asyncData() {
     return {
       user: {
@@ -41,18 +45,18 @@ export default {
   data() {
     return {};
   },
-
   components: {},
   methods: {
     async onLogin() {
       try {
         const user = this.user;
-        const { data } = await this.$axios.post("/api/users/login", { user });
-        // console.log(data);
-        this.$router.push('/')        
+        const { data } = await this.$axios.post("/api/users/login", { user });       
+        Cookie.set('user',data.user)
+        this.$store.commit('setUser',data.user)      
+        this.$router.push('/')  
       } catch (error) {
-        this.errors=error.response.data.errors;
-        console.log(this.errors);
+        // this.errors=error.response.data.errors;
+        console.log(error);
       }
     }
   },

@@ -44,6 +44,7 @@
 
 <script>
 export default {
+  middleware:'noAuthenticated',
   async asyncData() {
     return {
       user: {
