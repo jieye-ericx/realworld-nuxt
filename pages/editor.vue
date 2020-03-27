@@ -6,23 +6,48 @@
           <form>
             <fieldset>
               <fieldset class="form-group">
-                <input type="text" class="form-control form-control-lg" placeholder="Article Title" />
+                <input
+                  v-model.lazy="article.title"
+                  type="text"
+                  class="form-control form-control-lg"
+                  placeholder="Article Title"
+                />
               </fieldset>
               <fieldset class="form-group">
-                <input type="text" class="form-control" placeholder="What's this article about?" />
+                <input
+                  v-model.lazy="article.description"
+                  type="text"
+                  class="form-control"
+                  placeholder="What's this article about?"
+                />
               </fieldset>
               <fieldset class="form-group">
                 <textarea
                   class="form-control"
                   rows="8"
+                  v-model.lazy="article.body"
                   placeholder="Write your article (in markdown)"
                 ></textarea>
               </fieldset>
               <fieldset class="form-group">
-                <input type="text" class="form-control" placeholder="Enter tags" />
-                <div class="tag-list"></div>
+                <input
+                  v-model.lazy="tagText"
+                  type="text"
+                  class="form-control"
+                  placeholder="Enter tags"
+                  @keyup.enter="onAddTag"
+                />
+                <div class="tag-list">
+                  <span @click="article.tagList.splice(i,1)" v-for="(item,i) in article.tagList" :key="i" class="tag-default tag-pill">
+                    <i class="ion-close-roune" >{{item}}</i>
+                  </span>
+                </div>
               </fieldset>
-              <button class="btn btn-lg pull-xs-right btn-primary" type="button">Publish Article</button>
+              <button
+                @click="onCreate"
+                class="btn btn-lg pull-xs-right btn-primary"
+                type="button"
+              >Publish Article</button>
             </fieldset>
           </form>
         </div>
@@ -33,11 +58,41 @@
 
 <script>
 export default {
-  middleware:'authenticated',
+  middleware: "authenticated",
   data() {
-    return {};
+    return {
+      article: {
+        title: "",
+        description: "",
+        body: "",
+        tagList: []
+      },
+      tagText:''
+    };
   },
-  components: {}
+  components: {},
+  methods: {
+    async onCreate() {
+      const { data } = await this.$axios.post("/api/articles", {
+        article: this.article
+      });
+      // console.log(data);
+      this.$router.push(`/article/${data.article.slug}`)
+
+    },
+    onAddTag(){
+      const tagText=this.tagText
+      const {tagList}=this.article
+      if(!tagText.length){
+        return
+      }
+      if(this.article.tagList.includes(tagText)){
+        return
+      }
+      this.article.tagList.push(tagText)
+      this.tagText=''
+    }
+  }
 };
 </script>
 

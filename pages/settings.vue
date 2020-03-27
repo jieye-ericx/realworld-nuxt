@@ -29,6 +29,8 @@
               <button class="btn btn-lg btn-primary pull-xs-right">Update Settings</button>
             </fieldset>
           </form>
+          <hr>
+          <button class="btn btn-outline-danger" @click="onLogout">Logout</button>
         </div>
       </div>
     </div>
@@ -36,11 +38,20 @@
 </template>
 
 <script>
+const Cookie = process.client ? require("js-cookie") : undefined;
 export default {
+  middleware:'authenticated',
   data() {
     return {};
   },
-  components: {}
+  components: {},
+  methods: {
+    onLogout() {
+      Cookie.remove('user')
+      this.$store.commit('setUser',null)
+      this.$router.push('/')
+    }
+  }
 };
 </script>
 
