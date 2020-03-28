@@ -1,6 +1,10 @@
 # realworld-nuxt
 
-> A sample integrates realworld and nuxt 
+A sample integrates realworld and nuxt 
+
+for more information：
+[realworld](https://github.com/gothinkster/realworld)
+[nuxt.js](https://zh.nuxtjs.org/)
 
 ## Build Setup
 
