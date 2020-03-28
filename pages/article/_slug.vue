@@ -4,36 +4,13 @@
       <div class="container">
         <h1>{{article.title}}</h1>
 
-        <div class="article-meta">
-          <a href>
-            <img :src="article.author.image" />
-          </a>
-          <div class="info">
-            <a href class="author">{{article.author.username}}</a>
-            <span class="date">{{article.createdAt}}</span>
-          </div>
-          <button class="btn btn-sm btn-outline-secondary">
-            <i class="ion-plus-round"></i>
-            &nbsp;
-            Follow {{article.author.username}}
-            <span class="counter"></span>
-          </button>
-          &nbsp;&nbsp;
-          <button class="btn btn-sm btn-outline-primary">
-            <i class="ion-heart"></i>
-            &nbsp;
-            Favorite Post
-            <span v-if="article.favoritesCount!==0" class="counter">({{article.favoritesCount}})</span>
-          </button>
-        </div>
+        <AuthorInfo :article="article" />
       </div>
     </div>
 
     <div class="container page">
       <div class="row article-content">
-        <div class="col-md-12">
-          {{article.body}}
-        </div>
+        <div class="col-md-12" v-html="article.body"></div>
       </div>
 
       <hr />
@@ -41,29 +18,7 @@
       <hr />
 
       <div class="article-actions">
-        <div class="article-meta">
-          <a href="profile.html">
-            <img src="http://i.imgur.com/Qr71crq.jpg" />
-          </a>
-          <div class="info">
-            <a href class="author">Eric Simons</a>
-            <span class="date">January 20th</span>
-          </div>
-
-          <button class="btn btn-sm btn-outline-secondary">
-            <i class="ion-plus-round"></i>
-            &nbsp;
-            Follow Eric Simons
-            <span class="counter">(10)</span>
-          </button>
-          &nbsp;
-          <button class="btn btn-sm btn-outline-primary">
-            <i class="ion-heart"></i>
-            &nbsp;
-            Favorite Post
-            <span class="counter">(29)</span>
-          </button>
-        </div>
+        <AuthorInfo :article="article" />
       </div>
 
       <div class="row">
@@ -120,17 +75,38 @@
 </template>
 
 <script>
+import AuthorInfo from "@/components/author-info";
+const md = require("markdown-it")({
+  highlight: function(str, lang) {
+    if (lang && hljs.getLanguage(lang)) {
+      try {
+        return (
+          '<pre class="hljs"><code>' +
+          hljs.highlight(lang, str, true).value +
+          "</code></pre>"
+        );
+      } catch (__) {}
+    }
+
+    return (
+      '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + "</code></pre>"
+    );
+  }
+});
+import hljs from "highlight.js";
+import 'highlight.js/styles/atom-one-dark.css'
 export default {
-  async asyncData({params,$axios}) {
+  async asyncData({ params, $axios }) {
     const { data } = await $axios.get(`/api/articles/${params.slug}`);
+    data.article.body = md.render(data.article.body);
     return {
-      article:data.article
+      article: data.article
     };
   },
-  components: {},
-  methods: {
-
-  }
+  components: {
+    AuthorInfo
+  },
+  methods: {}
 };
 </script>
 
